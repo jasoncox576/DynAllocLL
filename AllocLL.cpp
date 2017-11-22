@@ -1,3 +1,7 @@
+//============================================================================
+// Name        : AllocLL.cpp
+// Author      : Jason Cox
+//============================================================================
 
 #include <cstdlib>
 #include <vector>
@@ -10,47 +14,55 @@ using namespace std;
 struct Link {
 
 public:
-
 	Link(int x) {
 
 		data = x;
 	}
 
-	int data;
+	Link() {}
 
+	int data;
 	Link* next;
 
+	~Link() {
+		if(next) delete next;
+		data = NULL;
+	}
 };
 
 
+Link* createLL(Link* head, int val, int start, int end) {
+	/* Recursively constructs linked list 'end' times with value of val*/
 
+	if(start < end) {
+		head = new Link(val);
+		head->next = createLL(head->next, val+1, start+1, end);
+	}
+	return head;
+}
+
+void traverseLL(Link* head) {
+	if(head) {
+		cout << head->data << endl;
+		if(head->next) {
+			traverseLL(head->next);
+		}
+	}
+}
 
 
 int main() {
 
-	Link mylink(100);
-	mylink.next = new Link(10);
+	Link* mylink = new Link();
+	mylink = createLL(mylink, 0, 0, 100000);
+	traverseLL(mylink);
+	delete mylink;
+	mylink = NULL;
 
-	delete mylink.next;
+	//As long as the pointer is deleted and subsequently set to NULL,
+	//the linked list will be safely deleted and an attempt to traverse it will not print anything.
 
-	stack<Link*> ptrs;
-	ptrs.push(new Link(5));
-
-	for(int i = 0; i < 100; ++i) {
-		Link head = *ptrs.top();
-		head.next = new Link(i);
-		ptrs.push(head.next);
-
-	}
-	for(int i = 0; i <= 100; ++i) {
-		Link head = *ptrs.top();
-		delete ptrs.top();
-		ptrs.pop();
-		cout << head.data << endl;
-
-	}
-	cout << "size of ptrs: " << ptrs.size() << endl;
-
+	traverseLL(mylink);
 
 	return 0;
 }
